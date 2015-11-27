@@ -1,0 +1,13 @@
+{
+  "name": "TronGame",
+  "version": "0.0.1",
+  "description": "Tron Game Master Race",
+  "dependencies": {
+    "express": "^4.13.3",
+    "socket.io": "^1.3.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Dowdow/TronGame.git"
+  }
+}

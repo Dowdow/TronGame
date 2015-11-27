@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <title>Tron</title>
+</head>
+<body>
+<h1>Tron</h1>
+<section id="login">
+    <form>
+        <input type="text" id="pseudo" placeholder="Entrez votre pseudo" />
+        <input type="submit" id="bouton-login" />
+    </form>
+</section>
+<section id="content">
+    <div class="half">
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="half">
+        <div id="chat" class="chat"></div>
+        <form>
+            <input type="text" id="text" placeholder="Entrer votre message ici" />
+            <input type="submit" id="bouton-chat" />
+        </form>
+    </div>
+</section>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/client.js"></script>
+</body>
+</html>

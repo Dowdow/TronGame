@@ -21,6 +21,9 @@ socket.on('move', function(move) {
     if(launch) {
         players[move.id].x = move.x;
         players[move.id].y = move.y;
+        if(move.hasOwnProperty('trails')) {
+            players[move.id].trails = move.trails;
+        }
     }
 });
 
@@ -82,8 +85,23 @@ function drawPlayer(player) {
     context.fillStyle = "#0074D9";
     context.fill();
     context.stroke();
+    var temp;
+    for (var k in player.trails) {
+        if(player.hasOwnProperty('trails')) {
+            if(player.trails[k] != player.trails[0]) {
+                drawTrail(player.trails[k], temp);
+            }
+            temp = player.trails[k];
+            if(player.trails[k] == player.trails[player.trails.length -1]) {
+                drawTrail(player.trails[k], { 'id': 0, 'x': player.x, 'y': player.y });
+            }
+        }
+    }
 }
 
-function drawTrail(player) {
-
+function drawTrail(point1, point2) {
+    context.beginPath();
+    context.moveTo(point1.x, point1.y);
+    context.lineTo(point2.x, point2.y);
+    context.stroke();
 }

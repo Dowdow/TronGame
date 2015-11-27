@@ -42,6 +42,7 @@ io.sockets.on('connection', function(socket) {
         else if(move.dx != me.dx * -1 && move.dy != me.dy * -1 ) {
             me.dx = move.dx;
             me.dy = move.dy;
+            me.trails.push({ 'id': trailid++, 'x': me.x, 'y': me.y });
         }
     });
 
@@ -71,7 +72,7 @@ timer = setInterval(function() {
             } else {
                 players[k].x += players[k].dx * vitesse;
                 players[k].y += players[k].dy * vitesse;
-                io.sockets.emit('move', { 'id': players[k].id, 'x': players[k].x, 'y': players[k].y });
+                io.sockets.emit('move', { 'id': players[k].id, 'x': players[k].x, 'y': players[k].y, 'trails': players[k].trails });
             }
         }
     }

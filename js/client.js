@@ -1,6 +1,6 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
-var socket = io.connect('http://195.221.42.98:3000');
+var socket = io.connect();
 var players = {};
 var launch = false;
 
@@ -11,6 +11,7 @@ socket.on('init', function(object) {
 
 socket.on('newplayer', function(player) {
     players[player.id] = player;
+    console.log(player.color);
 });
 
 socket.on('displayer', function(id) {
@@ -50,6 +51,7 @@ document.getElementById('bouton-chat').onclick = function(event) {
 };
 
 document.onkeypress = function (event) {
+    console.log(event.keyCode);
     switch (event.keyCode) {
         case 37:
             socket.emit('move', { 'dx': -1, 'dy': 0 });
@@ -79,29 +81,32 @@ timer = setInterval(function() {
 }, 16);
 
 function drawPlayer(player) {
-    context.beginPath();
-    context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
-    context.strokeStyle = "#111111";
-    context.fillStyle = "#0074D9";
-    context.fill();
-    context.stroke();
     var temp;
     for (var k in player.trails) {
         if(player.hasOwnProperty('trails')) {
             if(player.trails[k] != player.trails[0]) {
-                drawTrail(player.trails[k], temp);
+                drawTrail(player.trails[k], temp, player.color);
             }
             temp = player.trails[k];
             if(player.trails[k] == player.trails[player.trails.length -1]) {
-                drawTrail(player.trails[k], { 'id': 0, 'x': player.x, 'y': player.y });
+                drawTrail(player.trails[k], { 'id': 0, 'x': player.x, 'y': player.y }, player.color);
             }
         }
     }
+    context.beginPath();
+    context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
+    context.strokeStyle = "#111111";
+    context.fillStyle = player.color;
+    context.fill();
+    context.lineWidth = 1;
+    context.stroke();
 }
 
-function drawTrail(point1, point2) {
+function drawTrail(point1, point2, color) {
     context.beginPath();
     context.moveTo(point1.x, point1.y);
     context.lineTo(point2.x, point2.y);
+    context.lineWidth = 3;
+    context.strokeStyle = color;
     context.stroke();
 }

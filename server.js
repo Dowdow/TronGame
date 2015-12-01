@@ -15,6 +15,7 @@ var map = { 'width': 500, 'height': 500 };
 var players = {};
 var id = 0;
 var vitesse = 2;
+var colors = [ { 'color': '#0074D9', 'taken': false }, { 'color': '#FF4136', 'taken': false }, { 'color': '#FFDC00', 'taken': false }, { 'color': '#2ECC40', 'taken': false } ];
 
 io.sockets.on('connection', function(socket) {
 
@@ -24,6 +25,7 @@ io.sockets.on('connection', function(socket) {
     socket.on('login', function(name) {
         socket.emit('init', { 'map': map });
         me.name = name;
+        me.color = colors[Math.floor(Math.random() * 4)].color;
         for(var k in players) {
             if(players.hasOwnProperty(k)) {
                 socket.emit('newplayer', players[k]);

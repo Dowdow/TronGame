@@ -11,7 +11,6 @@ socket.on('init', function(object) {
 
 socket.on('newplayer', function(player) {
     players[player.id] = player;
-    console.log(player.color);
 });
 
 socket.on('displayer', function(id) {
@@ -38,20 +37,35 @@ socket.on('chat', function(message) {
 
 document.getElementById('bouton-login').onclick = function(event) {
     event.preventDefault();
-    socket.emit('login', document.getElementById('pseudo').value);
-    launch = true;
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('content').style.display = 'inline-block';
+    var pseudo = document.getElementById('pseudo').value;
+    if(pseudo != "") {
+        socket.emit('login', pseudo);
+        launch = true;
+        document.getElementById('login').style.display = 'none';
+        document.getElementById('content').style.display = 'inline-block';
+    }
+};
+
+document.getElementById('bouton-join').onclick = function(event) {
+    event.preventDefault();
+    socket.emit('join');
+};
+
+document.getElementById('bouton-quit').onclick = function(event) {
+    event.preventDefault();
+    socket.emit('quit');
 };
 
 document.getElementById('bouton-chat').onclick = function(event) {
     event.preventDefault();
-    socket.emit('chat', document.getElementById('text').value);
-    document.getElementById('text').value = '';
+    var text = document.getElementById('text').value;
+    if(value != "") {
+        socket.emit('chat', text);
+        document.getElementById('text').value = '';
+    }
 };
 
 document.onkeypress = function (event) {
-    console.log(event.keyCode);
     switch (event.keyCode) {
         case 37:
             socket.emit('move', { 'dx': -1, 'dy': 0 });

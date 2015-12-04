@@ -31,9 +31,22 @@ io.sockets.on('connection', function(socket) {
                 socket.emit('newplayer', players[k]);
             }
         }
+        io.sockets.emit('chat', { 'player': name , 'message': 'vient de se connecter !'});
+    });
+
+    socket.on('join', function() {
         players[me.id] = me;
         io.sockets.emit('newplayer', me);
-        io.sockets.emit('chat', { 'player': name , 'message': 'vient de se connecter !'});
+    });
+
+    socket.on('quit', function() {
+        delete players[me.id];
+        io.sockets.emit('displayer', me.id);
+        me.x = map.width / 2;
+        me.y = map.height / 2;
+        me.dx = 0;
+        me.dy = 0;
+        me.trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
     });
 
     socket.on('move', function(move) {

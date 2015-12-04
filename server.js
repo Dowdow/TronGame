@@ -15,13 +15,22 @@ var map = { 'width': 500, 'height': 500 };
 var players = {};
 var id = 0;
 var vitesse = 2;
+var playerleft;
 var colors = [ { 'color': '#0074D9', 'taken': false }, { 'color': '#FF4136', 'taken': false }, { 'color': '#FFDC00', 'taken': false }, { 'color': '#2ECC40', 'taken': false } ];
 
 io.sockets.on('connection', function(socket) {
 
-    var me = { 'id': 'player' + id++, 'x': map.width / 2, 'y': map.width / 2, 'dx': 0, 'dy': 0, 'trails': [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ] };
     var trailid = 1;
-
+    var me = { 
+     'id': 'player' + id++,
+     'x': map.width / 2,
+     'y': map.width / 2,
+     'dx': 0,
+     'dy': 0,
+     'trails': [ { 'id': trailid, 'x': map.width / 2, 'y': map.height / 2 } ],
+     'destroy': false 
+    };
+    
     socket.on('login', function(name) {
         socket.emit('init', { 'map': map });
         me.name = name;
@@ -76,21 +85,32 @@ io.sockets.on('connection', function(socket) {
 
 var timer = 0;
 timer = setInterval(function() {
+    // Vérifie que quelqu'un a gagné
+        // Si il ne reste que un joueur alors win
+        // Reset de tout le monde
+    // Vérifie les colisions
+    colisions();    
+}, 16);
+
+function colisions() {
     for (var k in players) {
         if(players.hasOwnProperty(k)) {
-            if(players[k].x + players[k].dx * vitesse - 10 <= 0
-            || players[k].x + players[k].dx * vitesse + 10 >= map.width
-            || players[k].y + players[k].dy * vitesse - 10 <=0
-            || players[k].y + players[k].dy * vitesse + 10 >= map.height
-            ) {
-                io.sockets.emit('move', { 'id': players[k].id, 'x': players[k].x, 'y': players[k].y });
-            } else {
-                players[k].x += players[k].dx * vitesse;
-                players[k].y += players[k].dy * vitesse;
-                io.sockets.emit('move', { 'id': players[k].id, 'x': players[k].x, 'y': players[k].y, 'trails': players[k].trails });
+            if(!players[k].destroy) {
+                if(players[k].x + players[k].dx * vitesse - 8 <= 0
+                || players[k].x + players[k].dx * vitesse + 8 >= map.width
+                || players[k].y + players[k].dy * vitesse - 8 <=0
+                || players[k].y + players[k].dy * vitesse + 8 >= map.height
+                ) {
+                    players[k].destroy = true;
+                    io.sockets.emit('destroy', players[k].id);
+                } else {
+                    players[k].x += players[k].dx * vitesse;
+                    players[k].y += players[k].dy * vitesse;
+                    io.sockets.emit('move', { 'id': players[k].id, 'x': players[k].x, 'y': players[k].y, 'trails': players[k].trails });
+                }
             }
         }
     }
-}, 16);
+}
 
 http.listen(3000);

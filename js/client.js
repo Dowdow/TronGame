@@ -27,6 +27,10 @@ socket.on('move', function(move) {
     }
 });
 
+socket.on('destroy', function(id) {
+    players[id].destroy = true;
+});
+
 socket.on('chat', function(message) {
     var p = document.createElement('p');
     p.innerHTML = message.player + ' : ' + message.message;
@@ -59,7 +63,7 @@ document.getElementById('bouton-quit').onclick = function(event) {
 document.getElementById('bouton-chat').onclick = function(event) {
     event.preventDefault();
     var text = document.getElementById('text').value;
-    if(value != "") {
+    if(text != "") {
         socket.emit('chat', text);
         document.getElementById('text').value = '';
     }
@@ -88,7 +92,9 @@ timer = setInterval(function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         for (var k in players) {
             if(players.hasOwnProperty(k)) {
-                drawPlayer(players[k]);
+                if(!players[k].destroy) {
+                    drawPlayer(players[k]);
+                }
             }
         }
     }

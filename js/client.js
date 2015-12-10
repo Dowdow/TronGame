@@ -1,7 +1,7 @@
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var socket = io.connect();
-var players = {};
+var players = [];
 var launch = false;
 
 socket.on('init', function(object) {
@@ -17,13 +17,9 @@ socket.on('displayer', function(id) {
     delete players[id];
 });
 
-socket.on('move', function(move) {
+socket.on('move', function(player) {
     if(launch) {
-        players[move.id].x = move.x;
-        players[move.id].y = move.y;
-        if(move.hasOwnProperty('trails')) {
-            players[move.id].trails = move.trails;
-        }
+        players[player.id] = player;
     }
 });
 
@@ -53,11 +49,15 @@ document.getElementById('bouton-login').onclick = function(event) {
 document.getElementById('bouton-join').onclick = function(event) {
     event.preventDefault();
     socket.emit('join');
+    document.getElementById('bouton-join').disabled = true;
+    document.getElementById('bouton-quit').disabled = false;
 };
 
 document.getElementById('bouton-quit').onclick = function(event) {
     event.preventDefault();
     socket.emit('quit');
+    document.getElementById('bouton-join').disabled = false;
+    document.getElementById('bouton-quit').disabled = true;
 };
 
 document.getElementById('bouton-chat').onclick = function(event) {

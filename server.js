@@ -13,7 +13,6 @@ app.get('/', function (req, res) {
 
 var map = { 'width': 500, 'height': 500 };
 var players = [];
-var id = 0;
 var vitesse = 2;
 var playerleft = 0;
 var start = false;
@@ -23,7 +22,6 @@ io.sockets.on('connection', function(socket) {
 
     var trailid = 1;
     var me = { 
-     'id': id++,
      'x': map.width / 2,
      'y': map.width / 2,
      'dx': 0,
@@ -44,25 +42,17 @@ io.sockets.on('connection', function(socket) {
         io.sockets.emit('chat', { 'player': name , 'message': 'vient de se connecter !'});
     });
 
-    socket.on('join', function() {
-        players[me.id] = me;
-        if(!start) {
+    socket.on('ready', function() {
+        if(!players.hasOwnProperty(me.id) && !start) {
+            me.id = players.push(me) - 1;
             playerleft++;
+            me.x = map.width / 2;
+            me.y = map.height / 2;
+            me.dx = 0;
+            me.dy = 0;
+            me.trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
+            io.sockets.emit('newplayer', me);
         }
-        me.x = map.width / 2;
-        me.y = map.height / 2;
-        me.dx = 0;
-        me.dy = 0;
-        me.trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
-        io.sockets.emit('newplayer', me);
-    });
-
-    socket.on('quit', function() {
-        delete players[me.id];
-        if(!me.destroy && start) {
-            playerleft--;
-        }
-        io.sockets.emit('displayer', me.id);
     });
 
     socket.on('move', function(move) {
@@ -83,7 +73,9 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('disconnect', function(){
         delete players[me.id];
-        io.sockets.emit('chat', { 'player': me.name , 'message': 'vient de se déconnecter !'});
+        if(typeof me.name != 'undefined') {
+            io.sockets.emit('chat', { 'player': me.name , 'message': 'vient de se déconnecter !'});
+        }
         io.sockets.emit('displayer', me.id);
     });
 });
@@ -92,7 +84,11 @@ var timer = 0;
 timer = setInterval(function() {
     if(start) {
         if(playerleft <= 1) {
-            reset();
+            io.sockets.emit('status', 'Celebrating !');
+            var waiting = setTimeout(function() {
+                reset();
+                clearTimeout(waiting);
+            }, 3000);
         } else {
             colliding();
             moving();
@@ -101,26 +97,19 @@ timer = setInterval(function() {
         if(playerleft > 1) {
             var timeout = setTimeout(function() {
                 start = true;
+                io.sockets.emit('status', 'Start !');
                 clearTimeout(timeout);
             }, 10000);
         }
     }
+    io.sockets.emit('status', 'Left : ' + playerleft + ' Length : ' + players.length);
 }, 16);
 
 function reset() {
-    start = false;
     playerleft = 0;
-    for(var k in players) {
-        if(players[k].hasOwnProperty(k)) {
-            players[k].destroy = false;
-            players[k].x = map.width / 2;
-            players[k].y = map.height / 2;
-            players[k].dx = 0;
-            players[k].dy = 0;
-            players[k].trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
-            io.sockets.emit('newplayer', players[k]);
-        }
-    }   
+    start = false;
+    players = [];
+    io.sockets.emit('reset');
 }
 
 function moving() {

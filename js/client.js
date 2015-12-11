@@ -27,6 +27,15 @@ socket.on('destroy', function(id) {
     players[id].destroy = true;
 });
 
+socket.on('status', function(content) {
+    document.getElementById('status').innerHTML = content;
+});
+
+socket.on('reset', function() {
+    players = [];
+    document.getElementById('status').innerHTML = 'En attente de joueurs ...';
+});
+
 socket.on('chat', function(message) {
     var p = document.createElement('p');
     p.innerHTML = message.player + ' : ' + message.message;
@@ -46,18 +55,9 @@ document.getElementById('bouton-login').onclick = function(event) {
     }
 };
 
-document.getElementById('bouton-join').onclick = function(event) {
+document.getElementById('bouton-ready').onclick = function(event) {
     event.preventDefault();
-    socket.emit('join');
-    document.getElementById('bouton-join').disabled = true;
-    document.getElementById('bouton-quit').disabled = false;
-};
-
-document.getElementById('bouton-quit').onclick = function(event) {
-    event.preventDefault();
-    socket.emit('quit');
-    document.getElementById('bouton-join').disabled = false;
-    document.getElementById('bouton-quit').disabled = true;
+    socket.emit('ready');
 };
 
 document.getElementById('bouton-chat').onclick = function(event) {
@@ -92,9 +92,7 @@ timer = setInterval(function() {
         context.clearRect(0, 0, canvas.width, canvas.height);
         for (var k in players) {
             if(players.hasOwnProperty(k)) {
-                if(!players[k].destroy) {
-                    drawPlayer(players[k]);
-                }
+                drawPlayer(players[k]);
             }
         }
     }
@@ -113,13 +111,15 @@ function drawPlayer(player) {
             }
         }
     }
-    context.beginPath();
-    context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
-    context.strokeStyle = "#111111";
-    context.fillStyle = player.color;
-    context.fill();
-    context.lineWidth = 1;
-    context.stroke();
+    if(!player.destroy) {
+        context.beginPath();
+        context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
+        context.strokeStyle = "#111111";
+        context.fillStyle = player.color;
+        context.fill();
+        context.lineWidth = 1;
+        context.stroke();
+    }
 }
 
 function drawTrail(point1, point2, color) {

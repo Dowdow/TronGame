@@ -6,7 +6,10 @@
     <title>Tron</title>
 </head>
 <body>
-<h1>Tron</h1>
+<p class=titre>
+    <span>T</span><span>R</span><span class="special">O</span><span>N</span>
+</p>
+
 <section id="login">
     <form>
         <input type="text" id="pseudo" placeholder="Entrez votre pseudo" />
@@ -14,15 +17,16 @@
     </form>
 </section>
 <section id="content">
-    <div class="half">
-        <p id="status"></p>
-        <canvas id="canvas"></canvas>
-    </div>
-    <div class="half">
-        <div id="chat" class="chat"></div>
+    <div>
         <form>
             <input type="submit" id="bouton-ready" value="Prêt" />
         </form>
+        <p id="status"></p>
+        <canvas id="canvas"></canvas>
+    </div>
+    <div>
+        <div id="chat" class="chat"></div>
+        
         <form>
             <input type="text" id="text" placeholder="Entrer votre message ici" />
             <input type="submit" id="bouton-chat" />

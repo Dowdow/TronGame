@@ -44,13 +44,14 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('ready', function() {
         if(!players.hasOwnProperty(me.id) && !start) {
-            me.id = players.push(me) - 1;
-            playerleft++;
+            me.destroy = false;
             me.x = map.width / 2;
             me.y = map.height / 2;
             me.dx = 0;
             me.dy = 0;
             me.trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
+            me.id = players.push(me) - 1;
+            playerleft++;
             io.sockets.emit('newplayer', me);
         }
     });
@@ -72,11 +73,14 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function(){
-        delete players[me.id];
+        if(start) {
+            me.destroy = true;
+            playerleft--;
+            io.sockets.emit('destroy', me.id);
+        }
         if(typeof me.name != 'undefined') {
             io.sockets.emit('chat', { 'player': me.name , 'message': 'vient de se déconnecter !'});
         }
-        io.sockets.emit('displayer', me.id);
     });
 });
 
@@ -102,10 +106,14 @@ timer = setInterval(function() {
             }, 10000);
         }
     }
-    io.sockets.emit('status', 'Left : ' + playerleft + ' Length : ' + players.length);
 }, 16);
 
 function reset() {
+    for(var k in players) {
+        if(players.hasOwnProperty(k)) {
+            delete players[k].id;
+        }
+    }
     playerleft = 0;
     start = false;
     players = [];

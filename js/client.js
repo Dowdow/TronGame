@@ -28,12 +28,12 @@ socket.on('destroy', function(id) {
 });
 
 socket.on('status', function(content) {
-    document.getElementById('status').innerHTML = content;
+    status(content);
 });
 
 socket.on('reset', function() {
     players = [];
-    document.getElementById('status').innerHTML = 'En attente de joueurs ...';
+    status('En attente de joueurs ...');
 });
 
 socket.on('chat', function(message) {
@@ -43,6 +43,15 @@ socket.on('chat', function(message) {
     chat.appendChild(p);
     chat.scrollTop = chat.scrollHeight;
 });
+
+function status(content) {
+    var p = document.createElement('p');
+    p.innerHTML = 'System : ' + content;
+    p.className = 'system';
+    var chat = document.getElementById('chat');
+    chat.appendChild(p);
+    chat.scrollTop = chat.scrollHeight;
+}
 
 document.getElementById('bouton-login').onclick = function(event) {
     event.preventDefault();
@@ -89,13 +98,13 @@ document.onkeypress = function (event) {
 window.ondevicemotion = function(event) {
     var x = event.accelerationIncludingGravity.x;
     var y = event.accelerationIncludingGravity.y;  
-    if(x <= -1) {
+    if(x <= -0.75) {
         socket.emit('move', { 'dx': 1, 'dy': 0 });
-    } else if(x >= 1) {
+    } else if(x >= 0.75) {
         socket.emit('move', { 'dx': -1, 'dy': 0 });
-    } else if(y <= -0.5) {
+    } else if(y <= -0.25) {
         socket.emit('move', { 'dx': 0, 'dy': -1 });
-    } else if(y >= 1.5) {
+    } else if(y >= 1) {
         socket.emit('move', { 'dx': 0, 'dy': 1 });
     } 
 };  

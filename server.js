@@ -18,6 +18,7 @@ var players = [];
 var vitesse = 2;
 var playerleft = 0;
 var start = false;
+var cooldown = true;
 var colors = [
     { 'color': '#0074D9', 'taken': 0, 'x': 50, 'y': 250 },
     { 'color': '#FF4136', 'taken': 0, 'x': 450, 'y': 250 },
@@ -100,8 +101,9 @@ io.sockets.on('connection', function(socket) {
 var timer = 0;
 timer = setInterval(function() {
     if(start) {
-        if(playerleft <= 1) {
-            io.sockets.emit('status', 'Celebrating !');
+        if(playerleft <= 1 && !cooldown) {
+            cooldown = true;
+            io.sockets.emit('status', getWinner() + ' remporte la partie !');
             var waiting = setTimeout(function() {
                 reset();
                 clearTimeout(waiting);
@@ -111,7 +113,9 @@ timer = setInterval(function() {
             moving();
         }
     } else {
-        if(playerleft > 1) {
+        if(playerleft > 1 && cooldown) {
+            cooldown = false;
+            io.sockets.emit('status', 'La partie démarre dans 10 secondes !');
             var timeout = setTimeout(function() {
                 start = true;
                 io.sockets.emit('status', 'Start !');
@@ -136,6 +140,16 @@ function reset() {
     start = false;
     players = [];
     io.sockets.emit('reset');
+}
+
+function getWinner() {
+    for (var k in players) {
+        if(players.hasOwnProperty(k)) {
+            if(!players[k].destroy) {
+                return players[k].name;
+            }
+        }
+    }
 }
 
 function moving() {

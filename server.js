@@ -30,7 +30,7 @@ io.sockets.on('connection', function(socket) {
     var me = {
      'dx': 0,
      'dy': 0,
-     'destroy': false 
+     'destroy': false
     };
     
     socket.on('login', function(name) {
@@ -68,14 +68,16 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('move', function(move) {
-        if(me.dx == 0 && me.dy == 0) {
-            me.dx = move.dx;
-            me.dy = move.dy;
-        }
-        else if(move.dx != me.dx * -1 && move.dy != me.dy * -1 ) {
-            me.dx = move.dx;
-            me.dy = move.dy;
-            me.trails.push({ 'id': trailid++, 'x': me.x, 'y': me.y });
+        if(players.hasOwnProperty(me.id) && start) {
+            if(me.dx == 0 && me.dy == 0) {
+                me.dx = move.dx;
+                me.dy = move.dy;
+            }
+            else if(move.dx != me.dx * -1 && move.dy != me.dy * -1 ) {
+                me.dx = move.dx;
+                me.dy = move.dy;
+                me.trails.push({ 'id': trailid++, 'x': me.x, 'y': me.y });
+            }
         }
     });
 

@@ -86,6 +86,20 @@ document.onkeypress = function (event) {
     }
 };
 
+window.ondevicemotion = function(event) {
+    var x = event.accelerationIncludingGravity.x;
+    var y = event.accelerationIncludingGravity.y;  
+    if(x <= -1) {
+        socket.emit('move', { 'dx': 1, 'dy': 0 });
+    } else if(x >= 1) {
+        socket.emit('move', { 'dx': -1, 'dy': 0 });
+    } else if(y <= -0.5) {
+        socket.emit('move', { 'dx': 0, 'dy': -1 });
+    } else if(y >= 1.5) {
+        socket.emit('move', { 'dx': 0, 'dy': 1 });
+    } 
+};  
+
 var timer = 0;
 timer = setInterval(function() {
     if (launch) {

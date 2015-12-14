@@ -18,24 +18,24 @@ var players = [];
 var vitesse = 2;
 var playerleft = 0;
 var start = false;
-var colors = [ { 'color': '#0074D9', 'taken': false }, { 'color': '#FF4136', 'taken': false }, { 'color': '#FFDC00', 'taken': false }, { 'color': '#2ECC40', 'taken': false } ];
+var colors = [
+    { 'color': '#0074D9', 'taken': 0, 'x': 50, 'y': 250 },
+    { 'color': '#FF4136', 'taken': 0, 'x': 450, 'y': 250 },
+    { 'color': '#FFDC00', 'taken': 0, 'x': 250, 'y': 50 }, 
+    { 'color': '#2ECC40', 'taken': 0, 'x': 250, 'y': 450 } ];
 
 io.sockets.on('connection', function(socket) {
 
     var trailid = 1;
-    var me = { 
-     'x': map.width / 2,
-     'y': map.width / 2,
+    var me = {
      'dx': 0,
      'dy': 0,
-     'trails': [ { 'id': trailid, 'x': map.width / 2, 'y': map.height / 2 } ],
      'destroy': false 
     };
     
     socket.on('login', function(name) {
         socket.emit('init', { 'map': map });
         me.name = name;
-        me.color = colors[Math.floor(Math.random() * 4)].color;
         for(var k in players) {
             if(players.hasOwnProperty(k)) {
                 socket.emit('newplayer', players[k]);
@@ -46,15 +46,24 @@ io.sockets.on('connection', function(socket) {
 
     socket.on('ready', function() {
         if(!players.hasOwnProperty(me.id) && !start) {
-            me.destroy = false;
-            me.x = map.width / 2;
-            me.y = map.height / 2;
-            me.dx = 0;
-            me.dy = 0;
-            me.trails = [ { 'id': 1, 'x': map.width / 2, 'y': map.height / 2 } ];
-            me.id = players.push(me) - 1;
-            playerleft++;
-            io.sockets.emit('newplayer', me);
+            for (var k in colors) {
+                if(colors.hasOwnProperty(k)) {
+                    if(colors[k].taken == 0) {
+                        colors[k].taken = 1;
+                        me.color = colors[k].color;
+                        me.x = colors[k].x;
+                        me.y = colors[k].y;
+                        me.dx = 0;
+                        me.dy =  0;
+                        me.destroy = false;
+                        me.trails = [ { 'id': 1, 'x': colors[k].x, 'y': colors[k].y } ];
+                        me.id = players.push(me) - 1;
+                        playerleft++;
+                        io.sockets.emit('newplayer', me);
+                        break;
+                    }
+                }
+            }
         }
     });
 
@@ -114,6 +123,11 @@ function reset() {
     for(var k in players) {
         if(players.hasOwnProperty(k)) {
             delete players[k].id;
+        }
+    }
+    for(var k in colors) {
+        if(colors.hasOwnProperty(k)) {
+            colors[k].taken = 0;
         }
     }
     playerleft = 0;

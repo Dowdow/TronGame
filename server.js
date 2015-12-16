@@ -14,6 +14,7 @@ app.get('/', function (req, res) {
 });
 
 var map = { 'width': 500, 'height': 500 };
+var collisionMap;
 var players = [];
 var vitesse = 2;
 var playerleft = 0;
@@ -139,6 +140,10 @@ function reset() {
     playerleft = 0;
     start = false;
     players = [];
+    collisionMap = new Array(map.width);
+    for (var i = 0; i < map.width; i++) {
+        collisionMap[i] = new Array(map.height);
+    }
     io.sockets.emit('reset');
 }
 
@@ -156,8 +161,12 @@ function moving() {
     for (var k in players) {
         if(players.hasOwnProperty(k)) {
             if(!players[k].destroy) {
+                var x1 = players[k].x;
+                var y1 = players[k].y;
                 players[k].x += players[k].dx * vitesse;
                 players[k].y += players[k].dy * vitesse;
+                var x2 = players[k].x;
+                var y2 = players[k].y;
                 io.sockets.emit('move', players[k]);
             }
         }
@@ -174,53 +183,6 @@ function colliding() {
                 || players[i].y + players[i].dy * vitesse + 8 >= map.height
                 ) {
                     destroy(players[i]);
-                } else {
-                    var temp;
-                    for (var j in players[i].trails) {
-                        if(players[i].trails.hasOwnProperty(j)) {
-                            var trail = players[i].trails[j];
-                            var contactx = 1;
-                            var contacty = 1;
-                            for (var k in players) {
-                                if(players.hasOwnProperty(k)) {
-                                    if(players[i].trails[j] != players[i].trails[0]) {
-                                        contactx = trail.x - temp.x;
-                                        contacty = trail.y - temp.y;
-                                    }
-                                    temp = trail;
-                                    if(players[i].trails[j] == players[i].trails[players[i].trails.length -1]) {
-                                        contactx = trail.x - players[k].x;
-                                        contacty = trail.y - players[k].y;
-                                    }
-                                    if(contactx == 0) {
-                                        if(players[k].dx > 0) {
-                                            if(players[k].x + players[k].dx * vitesse + 8 >= trail.x) {
-                                                destroy(players[k]);
-                                                console.log('Colision a droite !' + players[k].x + " " + trail.x);
-                                            }
-                                        } else if (players[k].dx < 0) {
-                                            if(players[k].x + players[k].dx * vitesse - 8 <= trail.x) {
-                                                destroy(players[k]);
-                                                console.log('Colision a gauche !');
-                                            }
-                                        }
-                                    } else if(contacty == 0) {
-                                        if(players[k].dx > 0) {
-                                            if(players[k].y + players[k].dy * vitesse + 8 >= trail.y) {
-                                                destroy(players[k]);
-                                                console.log('Colision en bas !');
-                                            }
-                                        } else if (players[k].dx < 0) {
-                                            if(players[k].y + players[k].dy * vitesse - 8 <= trail.y) {
-                                                destroy(players[k]);
-                                                console.log('Colision en haut !');
-                                            }
-                                        }
-                                    }
-                                }
-                            }   
-                        }
-                    }
                 }
             }
         }
@@ -233,4 +195,5 @@ function destroy(player) {
     io.sockets.emit('destroy', player.id);
 }
 
+reset();
 http.listen(3000);

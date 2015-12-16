@@ -165,15 +165,62 @@ function moving() {
 }
 
 function colliding() {
-    for (var k in players) {
-        if(players.hasOwnProperty(k)) {
-            if(!players[k].destroy) {
-                if(players[k].x + players[k].dx * vitesse - 8 <= 0
-                || players[k].x + players[k].dx * vitesse + 8 >= map.width
-                || players[k].y + players[k].dy * vitesse - 8 <=0
-                || players[k].y + players[k].dy * vitesse + 8 >= map.height
+    for (var i in players) {
+        if(players.hasOwnProperty(i)) {
+            if(!players[i].destroy) {
+                if(players[i].x + players[i].dx * vitesse - 8 <= 0
+                || players[i].x + players[i].dx * vitesse + 8 >= map.width
+                || players[i].y + players[i].dy * vitesse - 8 <=0
+                || players[i].y + players[i].dy * vitesse + 8 >= map.height
                 ) {
-                    destroy(players[k]);
+                    destroy(players[i]);
+                } else {
+                    var temp;
+                    for (var j in players[i].trails) {
+                        if(players[i].trails.hasOwnProperty(j)) {
+                            var trail = players[i].trails[j];
+                            var contactx = 1;
+                            var contacty = 1;
+                            for (var k in players) {
+                                if(players.hasOwnProperty(k)) {
+                                    if(players[i].trails[j] != players[i].trails[0]) {
+                                        contactx = trail.x - temp.x;
+                                        contacty = trail.y - temp.y;
+                                    }
+                                    temp = trail;
+                                    if(players[i].trails[j] == players[i].trails[players[i].trails.length -1]) {
+                                        contactx = trail.x - players[k].x;
+                                        contacty = trail.y - players[k].y;
+                                    }
+                                    if(contactx == 0) {
+                                        if(players[k].dx > 0) {
+                                            if(players[k].x + players[k].dx * vitesse + 8 >= trail.x) {
+                                                destroy(players[k]);
+                                                console.log('Colision a droite !' + players[k].x + " " + trail.x);
+                                            }
+                                        } else if (players[k].dx < 0) {
+                                            if(players[k].x + players[k].dx * vitesse - 8 <= trail.x) {
+                                                destroy(players[k]);
+                                                console.log('Colision a gauche !');
+                                            }
+                                        }
+                                    } else if(contacty == 0) {
+                                        if(players[k].dx > 0) {
+                                            if(players[k].y + players[k].dy * vitesse + 8 >= trail.y) {
+                                                destroy(players[k]);
+                                                console.log('Colision en bas !');
+                                            }
+                                        } else if (players[k].dx < 0) {
+                                            if(players[k].y + players[k].dy * vitesse - 8 <= trail.y) {
+                                                destroy(players[k]);
+                                                console.log('Colision en haut !');
+                                            }
+                                        }
+                                    }
+                                }
+                            }   
+                        }
+                    }
                 }
             }
         }

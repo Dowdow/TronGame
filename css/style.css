@@ -37,7 +37,7 @@ p.titre {
   float: left;
   font-family: 'tronregular';
   text-align: center;
-  font-size: 30pt;
+  font-size: 15pt;
 }
 
 p.titre span.special {
@@ -51,7 +51,7 @@ p.titre span.special {
 #content .ready {
   position: absolute;
   width: 30%;
-  top: 40px;
+  top: 10px;
   right: 20px;
 }
 
@@ -99,7 +99,6 @@ input[type=text] {
   top: 0;
   background: linear-gradient(left top, rgba(255,255,255,0.0), rgba(255,255,255,0.6) 35%, rgba(255,255,255,0.6) 70%, rgba(255,255,255,0));
   opacity: 1;
-  transition: opacity 0.3s ease-in-out;
 }
 
 canvas {
@@ -172,7 +171,8 @@ div form button {
   }
 
   p.titre {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    font-size: 40pt;
     display: inline-block;
     width: 100%;
   }
@@ -197,7 +197,6 @@ div form button {
 
   .chat {
     height: 500px;
-    margin-top: 20px;
   }
 
   div form {
@@ -223,8 +222,9 @@ div form button {
   }
   
   #content .ready {
+    top: 50px;
     right: 0px;
-    left: 20%;
+    left: 18%;
   }
 
   input#text{

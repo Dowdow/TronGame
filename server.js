@@ -109,7 +109,7 @@ timer = setInterval(function() {
                 reset();
                 clearTimeout(waiting);
             }, 3000);
-        } else {
+        } else if(playerleft > 1) {
             colliding();
             moving();
         }
@@ -144,6 +144,11 @@ function reset() {
     for (var i = 0; i < map.width; i++) {
         collisionMap[i] = new Array(map.height);
     }
+    for(var i = 0; i < map.width; i++) {
+        for (var j = 0; j < map.height; j++) {
+            collisionMap[i][j] = -1;
+        }
+    }
     io.sockets.emit('reset');
 }
 
@@ -165,24 +170,43 @@ function moving() {
                 var y1 = players[k].y;
                 players[k].x += players[k].dx * vitesse;
                 players[k].y += players[k].dy * vitesse;
+                io.sockets.emit('move', players[k]);
                 var x2 = players[k].x;
                 var y2 = players[k].y;
-                io.sockets.emit('move', players[k]);
+                while(x2 != x1 || y2 != y1){
+                    collisionMap[x1][y1] = players[k].id;
+                    x1 += players[k].dx;
+                    y1 += players[k].dy;
+                }
             }
         }
     }
 }
 
 function colliding() {
-    for (var i in players) {
-        if(players.hasOwnProperty(i)) {
-            if(!players[i].destroy) {
-                if(players[i].x + players[i].dx * vitesse - 8 <= 0
-                || players[i].x + players[i].dx * vitesse + 8 >= map.width
-                || players[i].y + players[i].dy * vitesse - 8 <=0
-                || players[i].y + players[i].dy * vitesse + 8 >= map.height
+    for (var k in players) {
+        if(players.hasOwnProperty(k)) {
+            if(!players[k].destroy) {
+                var x1 = players[k].x;
+                var y1 = players[k].y;
+                var x2 = players[k].x + players[k].dx * vitesse;
+                var y2 = players[k].y + players[k].dy * vitesse;
+                while(x2 != x1 || y2 != y1){
+                    if(collisionMap[x1][y1] != -1) {
+                        io.sockets.emit('status', players[collisionMap[x1][y1]].name + ' a détruit ' + players[k].name);
+                        destroy(players[k]);    
+                        break;
+                    }
+                    x1 += players[k].dx;
+                    y1 += players[k].dy;
+                }
+                if(players[k].x + players[k].dx * vitesse - 8 <= 0
+                || players[k].x + players[k].dx * vitesse + 8 >= map.width
+                || players[k].y + players[k].dy * vitesse - 8 <=0
+                || players[k].y + players[k].dy * vitesse + 8 >= map.height
                 ) {
-                    destroy(players[i]);
+                    io.sockets.emit('status', players[k].name + ' s\'est pris un mur !');
+                    destroy(players[k]);
                 }
             }
         }

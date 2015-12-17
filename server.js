@@ -16,7 +16,7 @@ app.get('/', function (req, res) {
 var map = { 'width': 500, 'height': 500 };
 var collisionMap;
 var players = [];
-var vitesse = 2;
+var vitesse = 4;
 var playerleft = 0;
 var start = false;
 var cooldown = true;
@@ -113,7 +113,7 @@ timer = setInterval(function() {
                 reset();
                 clearTimeout(waiting);
             }, 3000);
-        } else if(playerleft > 1) {
+        } else {
             colliding();
             moving();
         }
@@ -128,7 +128,7 @@ timer = setInterval(function() {
             }, 10000);
         }
     }
-}, 16);
+}, 33);
 
 function reset() {
     for(var k in players) {
@@ -172,6 +172,8 @@ function moving() {
             if(!players[k].destroy) {
                 var x1 = players[k].x;
                 var y1 = players[k].y;
+                var dx = players[k].dx;
+                var dy = players[k].dy;
                 players[k].x += players[k].dx * vitesse;
                 players[k].y += players[k].dy * vitesse;
                 io.sockets.emit('move', players[k]);
@@ -179,8 +181,8 @@ function moving() {
                 var y2 = players[k].y;
                 while(x2 != x1 || y2 != y1){
                     collisionMap[x1][y1] = players[k].id;
-                    x1 += players[k].dx;
-                    y1 += players[k].dy;
+                    x1 += dx;
+                    y1 += dy;
                 }
             }
         }
@@ -195,14 +197,20 @@ function colliding() {
                 var y1 = players[k].y;
                 var x2 = players[k].x + players[k].dx * vitesse;
                 var y2 = players[k].y + players[k].dy * vitesse;
+                var dx = players[k].dx;
+                var dy = players[k].dy;
                 while(x2 != x1 || y2 != y1){
                     if(collisionMap[x1][y1] != -1) {
-                        io.sockets.emit('status', players[collisionMap[x1][y1]].name + ' a détruit ' + players[k].name);
-                        destroy(players[k]);    
+                        if([collisionMap[x1][y1]] == players[k].id) {
+                            io.sockets.emit('status', players[k].name + ' s\'est auto détruit !');
+                        } else {
+                            io.sockets.emit('status', players[collisionMap[x1][y1]].name + ' a détruit ' + players[k].name);
+                        }
+                        destroy(players[k]);
                         break;
                     }
-                    x1 += players[k].dx;
-                    y1 += players[k].dy;
+                    x1 += dx;
+                    y1 += dy;
                 }
                 if(players[k].x + players[k].dx * vitesse - 8 <= 0
                 || players[k].x + players[k].dx * vitesse + 8 >= map.width

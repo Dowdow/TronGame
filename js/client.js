@@ -31,6 +31,11 @@ socket.on('status', function(content) {
     status(content);
 });
 
+socket.on('pong', function() {
+  latency = Date.now() - startTime;
+  document.getElementById('ping').innerHTML = 'Ping : ' + latency + 'ms';
+});
+
 socket.on('reset', function() {
     players = [];
     status('En attente de joueurs ...');
@@ -78,19 +83,28 @@ document.getElementById('bouton-chat').onclick = function(event) {
     }
 };
 
-document.onkeypress = function (event) {
+var lastKey;
+document.onkeydown = function (event) {
+    if(event.keyCode == lastKey) {
+        return;
+    }
+    console.log(event.keyCode);
     switch (event.keyCode) {
         case 37:
             socket.emit('move', { 'dx': -1, 'dy': 0 });
+            lastKey = 37;
             break;
         case 38:
             socket.emit('move', { 'dx': 0, 'dy': -1 });
+            lastKey = 38;
             break;
         case 39:
             socket.emit('move', { 'dx': 1, 'dy': 0 });
+            lastKey = 39;
             break;
         case 40:
             socket.emit('move', { 'dx': 0, 'dy': 1 });
+            lastKey = 40;
             break;
     }
 };
@@ -114,11 +128,6 @@ setInterval(function() {
     startTime = Date.now();
     socket.emit('ping');
 }, 2000);
-
-socket.on('pong', function() {
-  latency = Date.now() - startTime;
-  document.getElementById('ping').innerHTML = 'Ping : ' + latency + 'ms';
-});
 
 var timer;
 timer = setInterval(function() {

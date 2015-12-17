@@ -87,6 +87,10 @@ io.sockets.on('connection', function(socket) {
         io.sockets.emit('chat', { 'player': me.name , 'message': message});
     });
 
+    socket.on('ping', function() {
+        socket.emit('pong');
+    });
+
     socket.on('disconnect', function(){
         if(start) {
             me.destroy = true;

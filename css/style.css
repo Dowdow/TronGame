@@ -101,6 +101,13 @@ input[type=text] {
   opacity: 1;
 }
 
+.ping {
+  font-size: 10px;
+  color: white;
+  margin: 0px;
+  padding: 0px;
+}
+
 canvas {
   background-color: #0C141F;
   border: 1px solid #6FC3DF;
@@ -108,7 +115,7 @@ canvas {
   border-radius: 3px;
   box-shadow: 0px 0px 12px #6FC3DF;
   width: 95%;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
   background-size: 40px 40px;    
   background-image:repeating-linear-gradient(0deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px),repeating-linear-gradient(-90deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px);
 }
@@ -233,6 +240,12 @@ div form button {
 
   #bouton-chat{
     margin-top: 20px;
+  }
+
+  .ping {
+    position: absolute;
+    top: 5px;
+    left: 10px;
   }
 
 }

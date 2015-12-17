@@ -109,7 +109,18 @@ window.ondevicemotion = function(event) {
     } 
 };  
 
-var timer = 0;
+var startTime;
+setInterval(function() {
+    startTime = Date.now();
+    socket.emit('ping');
+}, 2000);
+
+socket.on('pong', function() {
+  latency = Date.now() - startTime;
+  document.getElementById('ping').innerHTML = 'Ping : ' + latency + 'ms';
+});
+
+var timer;
 timer = setInterval(function() {
     if (launch) {
         context.clearRect(0, 0, canvas.width, canvas.height);

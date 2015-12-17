@@ -47,6 +47,9 @@ socket.on('chat', function(message) {
     var chat = document.getElementById('chat');
     chat.appendChild(p);
     chat.scrollTop = chat.scrollHeight;
+    if(chat.childNodes.length > 20) {
+        chat.removeChild(chat.firstChild);
+    }
 });
 
 function status(content) {
@@ -56,13 +59,16 @@ function status(content) {
     var chat = document.getElementById('chat');
     chat.appendChild(p);
     chat.scrollTop = chat.scrollHeight;
+    if(chat.childNodes.length > 20) {
+        chat.removeChild(chat.firstChild);
+    }
 }
 
 document.getElementById('bouton-login').onclick = function(event) {
     event.preventDefault();
     var pseudo = document.getElementById('pseudo').value;
     if(pseudo != "") {
-        socket.emit('login', pseudo);
+        socket.emit('login', pseudo.substring(0,30));
         launch = true;
         document.getElementById('login').style.display = 'none';
         document.getElementById('content').style.display = 'inline-block';
@@ -157,11 +163,13 @@ function drawPlayer(player) {
     if(!player.destroy) {
         context.beginPath();
         context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
-        context.strokeStyle = "#111111";
+        context.strokeStyle = player.color;
         context.fillStyle = player.color;
         context.fill();
-        context.lineWidth = 1;
+        context.lineWidth = 2;
         context.stroke();
+        context.font = '12px Roboto';
+        context.fillText(player.name.substring(0,10), player.x -25, player.y - 15);
     }
 }
 

@@ -117,7 +117,8 @@ canvas {
   width: 95%;
   margin-bottom: 5px;
   background-size: 40px 40px;    
-  background-image:repeating-linear-gradient(0deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px),repeating-linear-gradient(-90deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px);
+  background-image:repeating-linear-gradient(0deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px),
+                   repeating-linear-gradient(-90deg, #6FC3DF, #6FC3DF 1px, transparent 1px, transparent 40px);
 }
 
 .chat {

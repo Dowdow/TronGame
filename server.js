@@ -21,10 +21,10 @@ var playerleft = 0;
 var start = false;
 var cooldown = true;
 var colors = [
-    { 'color': '#0074D9', 'taken': 0, 'x': 50, 'y': 250 },
-    { 'color': '#FF4136', 'taken': 0, 'x': 450, 'y': 250 },
-    { 'color': '#FFDC00', 'taken': 0, 'x': 250, 'y': 50 }, 
-    { 'color': '#2ECC40', 'taken': 0, 'x': 250, 'y': 450 } ];
+    { 'color': '#6FC3DF', 'taken': 0, 'x': 50, 'y': 250, 'dx': 0, 'dy': 1 },
+    { 'color': '#DF740C', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1 },
+    { 'color': '#E6FFFF', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0 }, 
+    { 'color': '#FFE64D', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0 } ];
 
 io.sockets.on('connection', function(socket) {
 
@@ -55,8 +55,8 @@ io.sockets.on('connection', function(socket) {
                         me.color = colors[k].color;
                         me.x = colors[k].x;
                         me.y = colors[k].y;
-                        me.dx = 0;
-                        me.dy =  0;
+                        me.dx = colors[k].dx;
+                        me.dy =  colors[k].dy;
                         me.destroy = false;
                         me.trails = [ { 'id': 1, 'x': colors[k].x, 'y': colors[k].y } ];
                         me.id = players.push(me) - 1;

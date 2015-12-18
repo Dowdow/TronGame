@@ -89,28 +89,19 @@ document.getElementById('bouton-chat').onclick = function(event) {
     }
 };
 
-var lastKey;
 document.onkeydown = function (event) {
-    if(event.keyCode == lastKey) {
-        return;
-    }
-    console.log(event.keyCode);
     switch (event.keyCode) {
         case 37:
             socket.emit('move', { 'dx': -1, 'dy': 0 });
-            lastKey = 37;
             break;
         case 38:
             socket.emit('move', { 'dx': 0, 'dy': -1 });
-            lastKey = 38;
             break;
         case 39:
             socket.emit('move', { 'dx': 1, 'dy': 0 });
-            lastKey = 39;
             break;
         case 40:
             socket.emit('move', { 'dx': 0, 'dy': 1 });
-            lastKey = 40;
             break;
     }
 };
@@ -161,13 +152,10 @@ function drawPlayer(player) {
         }
     }
     if(!player.destroy) {
-        context.beginPath();
-        context.arc(player.x, player.y, 10, 0, Math.PI * 2, true);
-        context.strokeStyle = player.color;
         context.fillStyle = player.color;
-        context.fill();
-        context.lineWidth = 2;
-        context.stroke();
+        var image = new Image();
+        image.src = player.img;
+        context.drawImage(image, player.x - 20, player.y - 10, 40, 20);
         context.font = '12px Roboto';
         context.fillText(player.name.substring(0,10), player.x -25, player.y - 15);
     }

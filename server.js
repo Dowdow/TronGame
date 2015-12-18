@@ -21,10 +21,10 @@ var playerleft = 0;
 var start = false;
 var cooldown = true;
 var colors = [
-    { 'color': '#6FC3DF', 'taken': 0, 'x': 50, 'y': 250, 'dx': 0, 'dy': 1 },
-    { 'color': '#DF740C', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1 },
-    { 'color': '#E6FFFF', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0 }, 
-    { 'color': '#FFE64D', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0 } ];
+    { 'color': '#6FC3DF', 'taken': 0, 'x': 50, 'y': 250, 'dx': 0, 'dy': 1, 'img': '/img/bcar.png' },
+    { 'color': '#DF740C', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1, 'img': '/img/gcar.png' },
+    { 'color': '#E6FFFF', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0, 'img': '/img/rcar.png' }, 
+    { 'color': '#FFE64D', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0, 'img': '/img/pcar.png' } ];
 
 io.sockets.on('connection', function(socket) {
 
@@ -53,6 +53,7 @@ io.sockets.on('connection', function(socket) {
                     if(colors[k].taken == 0) {
                         colors[k].taken = 1;
                         me.color = colors[k].color;
+                        me.img = colors[k].img;
                         me.x = colors[k].x;
                         me.y = colors[k].y;
                         me.dx = colors[k].dx;
@@ -120,12 +121,12 @@ timer = setInterval(function() {
     } else {
         if(playerleft > 1 && cooldown) {
             cooldown = false;
-            io.sockets.emit('status', 'La partie démarre dans 10 secondes !');
+            io.sockets.emit('status', 'La partie démarre dans 5 secondes !');
             var timeout = setTimeout(function() {
                 start = true;
                 io.sockets.emit('status', 'Start !');
                 clearTimeout(timeout);
-            }, 10000);
+            }, 5000);
         }
     }
 }, 33);

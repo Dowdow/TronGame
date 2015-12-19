@@ -152,13 +152,30 @@ function drawPlayer(player) {
         }
     }
     if(!player.destroy) {
-        context.fillStyle = player.color;
         var image = new Image();
         image.src = player.img;
-        context.drawImage(image, player.x - 20, player.y - 10, 40, 20);
+        context.fillStyle = player.color;
+        if(player.dx == 1 && player.dy == 0) {
+            drawRotatedImage(image, player.x, player.y, 180);
+        } else if(player.dx == -1 && player.dy == 0) {
+            drawRotatedImage(image, player.x, player.y, 0);
+        } else if(player.dx == 0 && player.dy == 1) {
+            drawRotatedImage(image, player.x, player.y, -90);
+        } else if(player.dx == 0 && player.dy == -1) {
+            drawRotatedImage(image, player.x, player.y, 90);
+        }
         context.font = '12px Roboto';
-        context.fillText(player.name.substring(0,10), player.x -25, player.y - 15);
+        context.fillText(player.name.substring(0,10), player.x -25, player.y - 25);
     }
+}
+
+var TO_RADIANS = Math.PI/180; 
+function drawRotatedImage(image, x, y, angle) { 
+    context.save(); 
+    context.translate(x, y);
+    context.rotate(angle * TO_RADIANS);
+    context.drawImage(image, -20, -10, 40, 20);
+    context.restore(); 
 }
 
 function drawTrail(point1, point2, color) {

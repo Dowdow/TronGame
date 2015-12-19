@@ -21,10 +21,10 @@ var playerleft = 0;
 var start = false;
 var cooldown = true;
 var colors = [
-    { 'color': '#6FC3DF', 'taken': 0, 'x': 50, 'y': 250, 'dx': 0, 'dy': 1, 'img': '/img/bcar.png' },
-    { 'color': '#DF740C', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1, 'img': '/img/gcar.png' },
-    { 'color': '#E6FFFF', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0, 'img': '/img/rcar.png' }, 
-    { 'color': '#FFE64D', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0, 'img': '/img/pcar.png' } ];
+    { 'color': '#438087', 'taken': 0, 'x': 50, 'y': 250, 'dx': 0, 'dy': 1, 'img': '/img/bcar.png' },
+    { 'color': '#74952B', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1, 'img': '/img/gcar.png' },
+    { 'color': '#8F3B36', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0, 'img': '/img/rcar.png' }, 
+    { 'color': '#932C91', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0, 'img': '/img/pcar.png' } ];
 
 io.sockets.on('connection', function(socket) {
 

@@ -104,13 +104,15 @@ io.sockets.on('connection', function(socket) {
     });
 });
 
-var timer = 0;
+var timer;
+var waiting;
+var timeout = 0;
 timer = setInterval(function() {
     if(start) {
         if(playerleft <= 1 && !cooldown) {
             cooldown = true;
             io.sockets.emit('status', getWinner() + ' remporte la partie !');
-            var waiting = setTimeout(function() {
+            waiting = setTimeout(function() {
                 reset();
                 clearTimeout(waiting);
             }, 3000);
@@ -122,11 +124,17 @@ timer = setInterval(function() {
         if(playerleft > 1 && cooldown) {
             cooldown = false;
             io.sockets.emit('status', 'La partie démarre dans 5 secondes !');
-            var timeout = setTimeout(function() {
+            timeout = setTimeout(function() {
                 start = true;
-                io.sockets.emit('status', 'Start !');
+                io.sockets.emit('status', 'La partie démarre !');
+                io.sockets.emit('loud', '');
                 clearTimeout(timeout);
+                timeout = 0;
             }, 5000);
+        }
+        if(timeout != 0) {
+            var timeleft = Math.ceil((timeout._idleStart + timeout._idleTimeout - Date.now()) / 1000);
+            io.sockets.emit('loud', timeleft);
         }
     }
 }, 33);

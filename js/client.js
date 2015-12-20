@@ -3,6 +3,7 @@ var context = canvas.getContext('2d');
 var socket = io.connect();
 var players = [];
 var launch = false;
+var announce = '';
 
 socket.on('init', function(object) {
     canvas.width = object.map.width;
@@ -50,6 +51,10 @@ socket.on('chat', function(message) {
     if(chat.childNodes.length > 20) {
         chat.removeChild(chat.firstChild);
     }
+});
+
+socket.on('loud', function(message) {
+    announce = message;
 });
 
 function status(content) {
@@ -130,11 +135,20 @@ var timer;
 timer = setInterval(function() {
     if (launch) {
         context.clearRect(0, 0, canvas.width, canvas.height);
+        for (var i = 0; i <= canvas.width; i+= 50) {
+            for (var j = 0; j <= canvas.height; j+= 50) {
+                drawTrail({ 'x': 0,'y': j }, { 'x': canvas.width, 'y': j }, '#8FB6CB', 1);
+                drawTrail({ 'x': i,'y': 0 }, { 'x':i, 'y': canvas.height }, '#8FB6CB', 1);
+            }   
+        }
         for (var k in players) {
             if(players.hasOwnProperty(k)) {
                 drawPlayer(players[k]);
             }
         }
+        context.font = '50px Roboto';
+        context.fillStyle = '#6FC3DF';
+        context.fillText(announce, canvas.width/2 - 20, canvas.height/2 + 15);
     }
 }, 16);
 
@@ -143,11 +157,11 @@ function drawPlayer(player) {
     for (var k in player.trails) {
         if(player.hasOwnProperty('trails')) {
             if(player.trails[k] != player.trails[0]) {
-                drawTrail(player.trails[k], temp, player.color);
+                drawTrail(player.trails[k], temp, player.color, 5);
             }
             temp = player.trails[k];
             if(player.trails[k] == player.trails[player.trails.length -1]) {
-                drawTrail(player.trails[k], { 'id': 0, 'x': player.x, 'y': player.y }, player.color);
+                drawTrail(player.trails[k], { 'id': 0, 'x': player.x, 'y': player.y }, player.color, 5);
             }
         }
     }
@@ -178,11 +192,11 @@ function drawRotatedImage(image, x, y, angle) {
     context.restore(); 
 }
 
-function drawTrail(point1, point2, color) {
+function drawTrail(point1, point2, color, lineWidth) {
     context.beginPath();
     context.moveTo(point1.x, point1.y);
     context.lineTo(point2.x, point2.y);
-    context.lineWidth = 3;
+    context.lineWidth = lineWidth;
     context.strokeStyle = color;
     context.stroke();
 }

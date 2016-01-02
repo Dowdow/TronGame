@@ -30,10 +30,11 @@
                     <span class="text">Prêt</span>
                 </button>
             </form>
+            <span id="joystick"></span>
             <canvas id="canvas"></canvas>
             <p id="ping" class="ping"></p>
         </div>
-        <div>
+        <div id="div-chat">
             <div id="chat" class="chat"></div>
             <form>
                 <input type="text" id="text" placeholder="Entrer votre message ici" />
@@ -43,9 +44,20 @@
                 </button>
             </form>
         </div>
+        <span id="div-control-mobile">
+            <button id="bouton-hide">
+                <span class="highlight"></span>
+                <span class="text">Afficher/Cacher chat</span>
+            </button>
+            <button id="bouton-device">
+                <span class="highlight"></span>
+                <span class="text">Joystick/Accelero</span>
+            </button>
+        </span>
     </section>
 </div>
 <script src="/socket.io/socket.io.js"></script>
+<script src="js/nipplejs.min.js"></script>
 <script src="js/client.js"></script>
 </body>
 </html>

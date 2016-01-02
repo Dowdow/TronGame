@@ -4,6 +4,7 @@ var socket = io.connect();
 var players = [];
 var launch = false;
 var announce = '';
+var joystick = document.getElementById('joystick');
 
 socket.on('init', function(object) {
     canvas.width = object.map.width;
@@ -77,6 +78,8 @@ document.getElementById('bouton-login').onclick = function(event) {
         launch = true;
         document.getElementById('login').style.display = 'none';
         document.getElementById('content').style.display = 'inline-block';
+        joystick.style.width = context.canvas.scrollWidth + 'px';
+        joystick.style.height = context.canvas.scrollWidth + 'px';
     }
 };
 
@@ -93,6 +96,28 @@ document.getElementById('bouton-chat').onclick = function(event) {
         document.getElementById('text').value = '';
     }
 };
+
+var hide = true;
+document.getElementById('bouton-hide').onclick = function(event) {
+  if(hide) {
+    document.getElementById('div-chat').style.display = 'block';
+    hide = false;
+  } else {
+    document.getElementById('div-chat').style.display = 'none';
+    hide = true;
+  }
+};
+
+var accelero = false;
+document.getElementById('bouton-device').onclick = function(event) {
+    if(accelero) {
+        joystick.style.display = 'block';
+        accelero = false;
+    } else {
+        joystick.style.display = 'none';
+        accelero = true;
+    }
+}
 
 document.onkeydown = function (event) {
     switch (event.keyCode) {
@@ -113,7 +138,10 @@ document.onkeydown = function (event) {
 
 window.ondevicemotion = function(event) {
     var x = event.accelerationIncludingGravity.x;
-    var y = event.accelerationIncludingGravity.y;  
+    var y = event.accelerationIncludingGravity.y;
+    if(!accelero) {
+        return;
+    } 
     if(x <= -0.75) {
         socket.emit('move', { 'dx': 1, 'dy': 0 });
     } else if(x >= 0.75) {
@@ -124,6 +152,32 @@ window.ondevicemotion = function(event) {
         socket.emit('move', { 'dx': 0, 'dy': 1 });
     } 
 };  
+
+var manager = nipplejs.create({
+    zone: document.getElementById('joystick'),
+    color: '#DF740C'
+});
+
+manager.on('added', function (evt, nipple) {
+    nipple.on('dir', function (evt) {
+        switch(evt.target.direction.angle) {
+            case 'up':
+                socket.emit('move', { 'dx': 0, 'dy': -1 });
+                break;
+            case 'down':
+                socket.emit('move', { 'dx': 0, 'dy': 1 });
+                break;
+            case 'left':
+                socket.emit('move', { 'dx': -1, 'dy': 0 });
+                break;
+            case 'right':
+                socket.emit('move', { 'dx': 1, 'dy': 0 });
+                break;
+        }
+    }).on('removed', function (evt, nipple) {
+        nipple.off('dir');
+    });
+});
 
 var startTime;
 setInterval(function() {

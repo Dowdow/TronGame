@@ -163,6 +163,19 @@ div form button {
   display: none;
 }
 
+#div-chat {
+  display: none;
+}
+
+#div-control-mobile {
+  display: block;
+  margin-top: 5px;
+}
+
+#joystick {
+  position: absolute;
+}
+
 @media screen and (min-width: 1024px) {
 
   .wrapper {
@@ -244,6 +257,14 @@ div form button {
     position: absolute;
     top: 5px;
     left: 10px;
+  }
+
+  #div-control-mobile {
+    display: none;
+  }
+
+  #joystick {
+    display: none;
   }
 
 }

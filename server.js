@@ -1,8 +1,11 @@
+/* ===================================
+   Initialisation des variables NodeJS
+   ===================================  */
+
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-var path = require('path');
 
 app.use('/css', express.static(__dirname + '/css'));
 app.use('/js', express.static(__dirname + '/js'));
@@ -12,6 +15,10 @@ app.use('/img', express.static(__dirname + '/img'));
 app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
+
+/* ===================================
+   Initialisation des variables de jeu
+   ===================================  */
 
 var map = { 'width': 500, 'height': 500 };
 var collisionMap;
@@ -25,6 +32,10 @@ var colors = [
     { 'color': '#74952B', 'taken': 0, 'x': 450, 'y': 250, 'dx': 0, 'dy': -1, 'img': '/img/gcar.png' },
     { 'color': '#8F3B36', 'taken': 0, 'x': 250, 'y': 50, 'dx': -1, 'dy': 0, 'img': '/img/rcar.png' }, 
     { 'color': '#932C91', 'taken': 0, 'x': 250, 'y': 450, 'dx': 1, 'dy': 0, 'img': '/img/pcar.png' } ];
+
+/* ============================
+   Communication avec le client
+   ============================  */
 
 io.sockets.on('connection', function(socket) {
 
@@ -103,6 +114,10 @@ io.sockets.on('connection', function(socket) {
         }
     });
 });
+
+/* ==========================================
+   Cycle de vie de la partie et boucle de jeu
+   ==========================================  */
 
 var timer;
 var waiting;
@@ -239,6 +254,10 @@ function destroy(player) {
     playerleft--;
     io.sockets.emit('destroy', player.id);
 }
+
+/* ====================
+   Lancement du serveur
+   ==================== */
 
 reset();
 http.listen(3000);

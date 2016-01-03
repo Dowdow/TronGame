@@ -1,3 +1,7 @@
+/* ============================
+   Initialisation des variables
+   ============================ */
+
 var canvas = document.getElementById('canvas');
 var context = canvas.getContext('2d');
 var socket = io.connect();
@@ -5,6 +9,10 @@ var players = [];
 var launch = false;
 var announce = '';
 var joystick = document.getElementById('joystick');
+
+/* ========================================
+   Gestion des interactions avec le serveur
+   ======================================== */
 
 socket.on('init', function(object) {
     canvas.width = object.map.width;
@@ -69,6 +77,10 @@ function status(content) {
         chat.removeChild(chat.firstChild);
     }
 }
+
+/* ==========================================
+   Gestion des interactions avec l'utlisateur
+   ==========================================  */
 
 document.getElementById('bouton-login').onclick = function(event) {
     event.preventDefault();
@@ -184,6 +196,10 @@ setInterval(function() {
     startTime = Date.now();
     socket.emit('ping');
 }, 2000);
+
+/* =============================================
+   Boucle de jeu pour l'affichage dans le canvas
+   =============================================  */
 
 var timer;
 timer = setInterval(function() {

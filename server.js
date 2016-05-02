@@ -104,13 +104,20 @@ io.sockets.on('connection', function(socket) {
     });
 
     socket.on('disconnect', function(){
-        if(start) {
+        if (typeof me.destroy !== 'undefined' && me.destroy === false) {
             me.destroy = true;
             playerleft--;
+            for(var c in colors) {
+                if(colors.hasOwnProperty(c)) {
+                    if(colors[c].color == me.color) {
+                        colors[c].taken = 0;
+                    }
+                }
+            }
             io.sockets.emit('destroy', me.id);
         }
-        if(typeof me.name != 'undefined') {
-            io.sockets.emit('chat', { 'player': me.name , 'message': 'vient de se déconnecter !'});
+        if (typeof me.name !== 'undefined') {
+            io.sockets.emit('chat', {'player': me.name, 'message': 'vient de se déconnecter !'});
         }
     });
 });
